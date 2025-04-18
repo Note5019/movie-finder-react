@@ -3,14 +3,13 @@ import Search from "./components/Search.jsx";
 import {useDebounce} from "react-use";
 import MovieCard from "./components/MovieCard.jsx";
 import Pagination from "./components/Pagination.jsx";
+import Spinner from "./components/Spinner.jsx";
 
 const API_BASE_URL = 'https://api.themoviedb.org/3';
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 const API_OPTIONS = {
-    method: 'GET',
-    headers: {
-        accept: 'application/json',
-        Authorization: `Bearer ${API_KEY}`
+    method: 'GET', headers: {
+        accept: 'application/json', Authorization: `Bearer ${API_KEY}`
     }
 }
 
@@ -28,9 +27,7 @@ const App = () => {
         setErrorMessage('')
 
         try {
-            const endpoint = query
-                ? `${API_BASE_URL}/search/movie?query=${encodeURIComponent(query)}&page=${currentPage}`
-                : `${API_BASE_URL}/discover/movie?sort_by=popularity.desc&page=${currentPage}`;
+            const endpoint = query ? `${API_BASE_URL}/search/movie?query=${encodeURIComponent(query)}&page=${currentPage}` : `${API_BASE_URL}/discover/movie?sort_by=popularity.desc&page=${currentPage}`;
             const response = await fetch(endpoint, API_OPTIONS)
 
             if (!response.ok) {
@@ -62,39 +59,37 @@ const App = () => {
         fetchMovies(debouncedSearchTerm)
     }, [debouncedSearchTerm, currentPage])
 
-    return (
-        <main>
-            <div className="pattern"/>
+    return (<main>
+        <div className="pattern"/>
 
-            <div className="wrapper">
-                <header>
-                    <img src="./hero.png" alt="Movies"/>
-                    <h1>Find <span className="text-gradient">Movies</span> You&#39;ll Love Without the Hassle</h1>
+        <div className="wrapper">
+            <header>
+                <img src="./hero.png" alt="Movies"/>
+                <h1>Find <span className="text-gradient">Movies</span> You&#39;ll Love Without the Hassle</h1>
 
-                    <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm}/>
-                    <span className="text-white">{searchTerm}</span>
-                </header>
+                <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm}/>
+            </header>
 
-                <section className="trending">
-                    trending
-                </section>
+            <section className="trending">
+                trending
+            </section>
 
-                <section className="all-movies">
-                    <h2>Popular</h2>
-                    <ul>
-                        {
-                            movieList.map(movie => (<MovieCard key={movie.id} movie={movie}/>))
-                        }
-                    </ul>
-                </section>
+            <section className="all-movies">
+                <h2>Popular</h2>
+                {isLoading ? (<div className="flex justify-center items-center m-10">
+                    <Spinner/>
+                </div>) : errorMessage ? (<p className="text-red-500">{errorMessage}</p>) : (<ul>
+                    {movieList.map(movie => (<MovieCard key={movie.id} movie={movie}/>))}
+                </ul>)}
 
-                <Pagination currentPage={currentPage}
-                            totalPage={totalPage}
-                            nextPage={() => currentPage >= totalPage ? null : setCurrentPage((prevState) => prevState + 1)}
-                            previousPage={() => currentPage <= 1 ? null : setCurrentPage((prevState) => prevState - 1)}/>
-            </div>
-        </main>
-    );
+            </section>
+
+            <Pagination currentPage={currentPage}
+                        totalPage={totalPage}
+                        nextPage={() => currentPage >= totalPage ? null : setCurrentPage((prevState) => prevState + 1)}
+                        previousPage={() => currentPage <= 1 ? null : setCurrentPage((prevState) => prevState - 1)}/>
+        </div>
+    </main>);
 };
 
 export default App;
