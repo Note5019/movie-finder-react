@@ -102,28 +102,6 @@ const App = () => {
                 </section>
             </div>
         </main>
-        // <div className="bg-[url(hero-bg.png)]">
-        //     <header className="">
-        //         <div className="flex flex-col justify-center items-center">
-        //
-        //
-        //
-        //         </div>
-        //
-        //     </header>
-        //     {/*<div className="pt-10 flex flex-col justify-center items-center">*/}
-        //     {/*    */}
-        //     {/*</div>*/}
-        //
-        //
-        //
-        //     <div className="card-container">
-        //         <Card title="Star Wars" rating={5} isCool={true} />
-        //         <Card title="Avatar" />
-        //         <Card title="The Lion King" />
-        //         <div className="bg-red-500 w-10 h-10"></div>
-        //     </div>
-        // </div>
     );
 };
 
