@@ -2,24 +2,7 @@ import {useEffect, useState} from "react";
 import Search from "./components/Search.jsx";
 import {useDebounce} from "react-use";
 import MovieCard from "./components/MovieCard.jsx";
-
-const Card = ({title}) => {
-    const [hasLiked, setHasLiked] = useState(false);
-
-    useEffect(() => {
-        console.log(`${title} has been liked: ${hasLiked}`)
-    });
-
-    return (
-        <div className="card">
-            <h2>{title}</h2>
-
-            <button onClick={() => setHasLiked(!hasLiked)}>
-                {hasLiked ? "Liked" : "Like"}
-            </button>
-        </div>
-    );
-};
+import Pagination from "./components/Pagination.jsx";
 
 const API_BASE_URL = 'https://api.themoviedb.org/3';
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
@@ -33,6 +16,8 @@ const API_OPTIONS = {
 
 const App = () => {
     const [searchTerm, setSearchTerm] = useState("")
+    const [currentPage, setCurrentPage] = useState(1)
+    const [totalPage, setTotalPage] = useState(1)
     const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("")
     const [movieList, setMovieList] = useState([])
     const [errorMessage, setErrorMessage] = useState('')
@@ -44,8 +29,8 @@ const App = () => {
 
         try {
             const endpoint = query
-                ? `${API_BASE_URL}/search/movie?query=${encodeURIComponent(query)}`
-                : `${API_BASE_URL}/discover/movie?sort_by=popularity.desc`;
+                ? `${API_BASE_URL}/search/movie?query=${encodeURIComponent(query)}&page=${currentPage}`
+                : `${API_BASE_URL}/discover/movie?sort_by=popularity.desc&page=${currentPage}`;
             const response = await fetch(endpoint, API_OPTIONS)
 
             if (!response.ok) {
@@ -60,6 +45,8 @@ const App = () => {
             }
 
             setMovieList(data.results || [])
+            setCurrentPage(Number(data.page))
+            setTotalPage(Number(data.total_pages))
             console.log('movieList', movieList)
         } catch (error) {
             console.error(error)
@@ -73,7 +60,7 @@ const App = () => {
 
     useEffect(() => {
         fetchMovies(debouncedSearchTerm)
-    }, [debouncedSearchTerm])
+    }, [debouncedSearchTerm, currentPage])
 
     return (
         <main>
@@ -100,6 +87,11 @@ const App = () => {
                         }
                     </ul>
                 </section>
+
+                <Pagination currentPage={currentPage}
+                            totalPage={totalPage}
+                            nextPage={() => currentPage >= totalPage ? null : setCurrentPage((prevState) => prevState + 1)}
+                            previousPage={() => currentPage <= 1 ? null : setCurrentPage((prevState) => prevState - 1)}/>
             </div>
         </main>
     );
