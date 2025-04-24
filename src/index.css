@@ -11,7 +11,9 @@
 
   --color-gray-100: #9ca4ab;
 
+
   --color-dark-100: #0f0d23;
+  --color-dark-200: #221F3D;
 
   --font-dm-sans: DM Sans, sans-serif;
 
@@ -150,6 +152,16 @@
 
     & .page {
       @apply text-white;
+    }
+  }
+
+  .movie-detail {
+    @apply grid grid-cols-1 md:grid-cols-8 mb-5 gap-x-3;
+    & .topic {
+      @apply col-span-1 text-light-200 font-medium;
+    }
+    & .detail {
+      @apply col-span-7 text-light-100;
     }
   }
 }
